@@ -28,7 +28,7 @@ else:
     print("成功检索到相关块！")
 
 from openai import OpenAI
-client = OpenAI(api_key="sk-0fc1290a66604007a5c1715d397c0736", base_url="https://api.deepseek.com")
+client = OpenAI(api_key="", base_url="https://api.deepseek.com")
 
 prompt = f"请根据以下内容回答问题。\n内容:{related}\n问题:{question}"
 print("正在请求模型...")
