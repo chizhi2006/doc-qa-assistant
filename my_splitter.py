@@ -1,4 +1,8 @@
 import time
+
+from openai import(APITimeoutError, APIConnectionError, RateLimitError,
+    AuthenticationError, BadRequestError, PermissionDeniedError)
+
 from my_utils import advanced_splitter
 # === 主程序 ===
 with open("note.txt", "r", encoding="utf-8") as f:
@@ -23,12 +27,8 @@ if related == "":
 else:
     print("成功检索到相关块！")
 
-print("\n=== 正在发送给大模型的参考资料 ===")
-print(related)
-print("==================================\n")
-
 from openai import OpenAI
-client = OpenAI(api_key="", base_url="https://api.deepseek.com")
+client = OpenAI(api_key="sk-0fc1290a66604007a5c1715d397c0736", base_url="https://api.deepseek.com")
 
 prompt = f"请根据以下内容回答问题。\n内容:{related}\n问题:{question}"
 print("正在请求模型...")
@@ -43,13 +43,25 @@ for i in range(MAXRETRIES):
         )
         answer = resp.choices[0].message.content
         break
-    except Exception as e:
-        print(f"第{i+1}次尝试失败，错误原因：{e}")
+    except (APITimeoutError, APIConnectionError, RateLimitError) as e:
+        print("限流/网络异常，重试中...")
         if i < MAXRETRIES-1:
-            print("等待两秒后重试")
-            time.sleep(2)
+            waittime=2**i
+            print(f"等待{waittime}秒后重试")
+            time.sleep(2**i)
         else:
-            answer="三次重试均失败，已触发降级策略"
-
+            print("三次重试均失败，已触发降级策略,返回原文")
+            answer=related
+    except AuthenticationError as e:
+        print("key失效，ai暂不可用，返回原文")
+        answer=related
+        break
+    except (BadRequestError, PermissionDeniedError) as e:
+        answer="参数或权限错误"
+        break
+    except Exception as e:
+        print(f"未知错误: {e}")
+        answer = "发生未知错误。"
+        break
 print("\n模型回答：")
 print(answer)
