@@ -37,4 +37,4 @@ demo = gr.ChatInterface(
 
 if __name__ == "__main__":
     # 启动网页
-    demo.launch()
+    demo.launch(share=true)

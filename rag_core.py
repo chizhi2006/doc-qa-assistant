@@ -6,7 +6,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_openai import ChatOpenAI
-os.environ["OPENAI_API_KEY"] = "sk-0fc1290a66604007a5c1715d397c0736"  # 
+os.environ["OPENAI_API_KEY"] = ""  # 
 os.environ["OPENAI_API_BASE"] = "https://api.deepseek.com/v1" 
 class RAGSystem:
     def __init__(self):
